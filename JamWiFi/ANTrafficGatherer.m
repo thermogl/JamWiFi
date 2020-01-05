@@ -67,6 +67,12 @@
     [stationColumn setWidth:120];
     [stationColumn setEditable:NO];
     [clientsTable addTableColumn:stationColumn];
+
+    NSTableColumn * essidColumn = [[NSTableColumn alloc] initWithIdentifier:@"essid"];
+    [[essidColumn headerCell] setStringValue:@"ESSID"];
+    [essidColumn setWidth:120];
+    [essidColumn setEditable:NO];
+    [clientsTable addTableColumn:essidColumn];
     
     NSTableColumn * bssidColumn = [[NSTableColumn alloc] initWithIdentifier:@"bssid"];
     [[bssidColumn headerCell] setStringValue:@"BSSID"];
@@ -136,6 +142,8 @@
         return [NSNumber numberWithBool:client.enabled];
     } else if ([[tableColumn identifier] isEqualToString:@"rssi"]) {
         return [NSNumber numberWithFloat:client.rssi];
+    } else if (([[tableColumn identifier] isEqualToString:@"essid"])) {
+        return client.essid;
     }
     return nil;
 }
@@ -166,6 +174,15 @@
         }
     }
     return NO;
+}
+
+- (NSString *)ssidForBSSID:(NSString *)bssid {
+    for (CWNetwork *network in networks) {
+        if ([bssid isEqualToString:network.bssid]) {
+            return network.ssid;
+        }
+    }
+    return @"Unknown";
 }
 
 - (void)hopChannel {
@@ -216,6 +233,7 @@
         ANClient * clientObj = [[ANClient alloc] initWithMac:client bssid:bssid];
         if (![allClients containsObject:clientObj]) {
             [allClients addObject:clientObj];
+            clientObj.essid = [self ssidForBSSID:MACToString(bssid)];
         } else {
             ANClient * origClient = [allClients objectAtIndex:[allClients indexOfObject:clientObj]];
             origClient.packetCount += 1;

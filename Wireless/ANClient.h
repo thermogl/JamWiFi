@@ -22,6 +22,7 @@
 @property (readonly) unsigned char * bssid;
 @property (readwrite) float rssi;
 @property (readwrite) BOOL enabled;
+@property (strong) NSString * essid;
 
 - (id)initWithMac:(const unsigned char *)mac bssid:(const unsigned char *)aBSSID;
 
