@@ -41,8 +41,11 @@ int main(int argc, char *argv[]) {
             char * myArguments[] = {NULL};
             
             myFlags = kAuthorizationFlagDefaults;
-            myStatus = AuthorizationExecuteWithPrivileges(myAuthorizationRef, myToolPath, myFlags, myArguments,
-                                                          NULL);
+#pragma GCC diagnostic ignored "-Wdeprecated"
+#pragma clang diagnostic push
+                myStatus = AuthorizationExecuteWithPrivileges(myAuthorizationRef, myToolPath, myFlags, myArguments, NULL);
+#pragma clang diagnostic pop
+
             AuthorizationFree(myAuthorizationRef, kAuthorizationFlagDefaults);
             exit(0);
         }
